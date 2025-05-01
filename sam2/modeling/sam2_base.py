@@ -855,6 +855,14 @@ class SAM2Base(torch.nn.Module):
             obj_ptr,
             object_score_logits,
         ) = sam_outputs
+        
+        ###############################
+        from torchvision.ops import masks_to_boxes
+
+        binary = (high_res_masks.sigmoid() > 0.5).squeeze(1).to(torch.uint8)
+        boxes  = masks_to_boxes(binary)
+        # now return `boxes` (shape [B,4]) instead of or alongside your masks
+
 
         current_out["pred_masks"] = low_res_masks
         current_out["pred_masks_high_res"] = high_res_masks
